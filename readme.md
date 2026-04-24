@@ -42,6 +42,12 @@ The system reads battery voltage through a voltage divider, processes it using t
 
 ---
 
+## 📸 Hardware Setup
+
+![I2C LCD Setup](./assets/BatteryMonitorI2C.jpeg)
+
+ESP32 interfaced with a 16x2 I2C LCD and voltage divider circuit for battery measurement.
+
 ## 🧠 System Architecture
 
 Battery → Voltage Divider → ESP32 ADC → Processing → LCD + Serial Output
