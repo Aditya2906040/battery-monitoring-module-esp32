@@ -14,53 +14,69 @@ const float DIVIDER_RATIO = 2.0;
 
 const int NUM_SAMPLES = 300;
 
-int lastPercent = -1;  // for change detection
+int lastPercent = -1; // for change detection
 
-// 🔋 Battery percentage mapping
-int getBatteryPercentage(float voltage) {
-  if (voltage >= 4.2) return 100;
-  if (voltage >= 4.1) return 90 + (voltage - 4.1) * 100;
-  if (voltage >= 4.0) return 80 + (voltage - 4.0) * 100;
-  if (voltage >= 3.9) return 70 + (voltage - 3.9) * 100;
-  if (voltage >= 3.8) return 60 + (voltage - 3.8) * 100;
-  if (voltage >= 3.7) return 50 + (voltage - 3.7) * 100;
-  if (voltage >= 3.6) return 40 + (voltage - 3.6) * 100;
-  if (voltage >= 3.5) return 30 + (voltage - 3.5) * 100;
-  if (voltage >= 3.4) return 20 + (voltage - 3.4) * 100;
-  if (voltage >= 3.3) return 10 + (voltage - 3.3) * 100;
-  if (voltage >= 3.2) return 5 + (voltage - 3.2) * 50;
+// Battery percentage mapping
+int getBatteryPercentage(float voltage)
+{
+  if (voltage >= 4.2)
+    return 100;
+  if (voltage >= 4.1)
+    return 90 + (voltage - 4.1) * 100;
+  if (voltage >= 4.0)
+    return 80 + (voltage - 4.0) * 100;
+  if (voltage >= 3.9)
+    return 70 + (voltage - 3.9) * 100;
+  if (voltage >= 3.8)
+    return 60 + (voltage - 3.8) * 100;
+  if (voltage >= 3.7)
+    return 50 + (voltage - 3.7) * 100;
+  if (voltage >= 3.6)
+    return 40 + (voltage - 3.6) * 100;
+  if (voltage >= 3.5)
+    return 30 + (voltage - 3.5) * 100;
+  if (voltage >= 3.4)
+    return 20 + (voltage - 3.4) * 100;
+  if (voltage >= 3.3)
+    return 10 + (voltage - 3.3) * 100;
+  if (voltage >= 3.2)
+    return 5 + (voltage - 3.2) * 50;
   return 0;
 }
 
-// 🔋 Custom characters (battery bar)
-byte barEmpty[8] = {0,0,0,0,0,0,0,0};
-byte barFull[8]  = {31,31,31,31,31,31,31,31};
+// Custom characters (battery bar)
+byte barEmpty[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+byte barFull[8] = {31, 31, 31, 31, 31, 31, 31, 31};
 
-// 🔋 Draw battery bar
-void drawBatteryBar(int percent) {
+// Draw battery bar
+void drawBatteryBar(int percent)
+{
   int totalBlocks = 10;
   int filled = (percent * totalBlocks) / 100;
 
   lcd.setCursor(0, 0);
   lcd.print("[");
-  
-  for (int i = 0; i < totalBlocks; i++) {
-    if (i < filled) 
+
+  for (int i = 0; i < totalBlocks; i++)
+  {
+    if (i < filled)
       lcd.write(byte(1)); // full
     else
-       lcd.write(byte(0));            // empty
+      lcd.write(byte(0)); // empty
   }
 
   lcd.print("]");
 }
 
-// 🔋 Read battery voltage
-float readBatteryVoltage() {
+// Read battery voltage
+float readBatteryVoltage()
+{
   uint32_t sum = 0;
 
-  for (int i = 0; i < NUM_SAMPLES; i++) {
+  for (int i = 0; i < NUM_SAMPLES; i++)
+  {
     sum += analogRead(ADC_PIN);
-    delay(1); // small delay OK
+    delay(1); // small delay before next read
   }
 
   float adc_avg = sum / (float)NUM_SAMPLES;
@@ -71,7 +87,8 @@ float readBatteryVoltage() {
   return v_battery;
 }
 
-void setup() {
+void setup()
+{
   Serial.begin(115200);
 
   lcd.init();
@@ -90,10 +107,12 @@ void setup() {
   analogSetAttenuation(ADC_11db);
 }
 
-void loop() {
+void loop()
+{
   unsigned long currentMillis = millis();
 
-  if (currentMillis - previousMillis >= interval) {
+  if (currentMillis - previousMillis >= interval)
+  {
     previousMillis += interval;
 
     float v_battery = readBatteryVoltage();
@@ -107,7 +126,8 @@ void loop() {
     Serial.println(" %");
 
     // Update LCD ONLY if changed (important)
-    if (batteryPercent != lastPercent) {
+    if (batteryPercent != lastPercent)
+    {
       lastPercent = batteryPercent;
 
       drawBatteryBar(batteryPercent);
@@ -125,7 +145,8 @@ void loop() {
     }
 
     // 🔔 Low battery warning
-    if (v_battery < 3.3) {
+    if (v_battery < 3.3)
+    {
       lcd.setCursor(0, 1);
       lcd.print("LOW BATTERY!  ");
       Serial.println("⚠ LOW BATTERY!");
